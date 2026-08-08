@@ -1,16 +1,20 @@
 package com.sky.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.constant.PasswordConstant;
 import com.sky.constant.StatusConstant;
 import com.sky.context.BaseContext;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
+import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
 import com.sky.exception.AccountLockedException;
 import com.sky.exception.AccountNotFoundException;
 import com.sky.exception.PasswordErrorException;
 import com.sky.mapper.EmployeeMapper;
+import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.EmployeeService;
 import org.springframework.beans.BeanUtils;
@@ -19,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static com.sky.constant.PasswordConstant.DEFAULT_PASSWORD;
 
@@ -68,7 +73,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     /**
-     *
+     * 新增员工
+     * @param employeeDTO
+     * @return
      */
     public Result save(EmployeeDTO employeeDTO){
         Employee employee = new Employee();
@@ -92,6 +99,23 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeMapper.insert(employee);
 
         return Result.success();
+    }
+
+    /**
+     * 分页查询员工
+     * @param employeePageQueryDTO
+     * @return
+     */
+    public Result<PageResult<Employee>> getPage(EmployeePageQueryDTO employeePageQueryDTO){
+        // 插件帮忙实现分页查找
+        PageHelper.startPage(employeePageQueryDTO.getPage(),employeePageQueryDTO.getPageSize());
+
+        PageResult<Employee> pageResult = new PageResult<Employee>();
+        Page<Employee> page = employeeMapper.selectPage(employeePageQueryDTO);
+        pageResult.setRecords(page.getResult());
+        pageResult.setTotal(page.getTotal()); // 虽然 page 是查一页，但是 pagehelper 会获取所有数据
+
+        return Result.success(pageResult);
     }
 
 }

@@ -2,4 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.sky.mapper.EmployeeMapper">
+    <!-- PageHelper 帮我们做了 limit *,* 的事情 -->
+    <select id="selectPage" resultType="com.sky.entity.Employee">
+        select * from employee
+        <where>
+            <!-- 多个 if 并列，要在开头写 and ，一个 if 也保留这个习惯 -->
+            <if test="name != null and name != ''">
+                and name like concat('%',#{name},'%')
+            </if>
+        </where>
+        order by create_time desc
+    </select>
 </mapper>
