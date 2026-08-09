@@ -19,4 +19,6 @@ public interface EmployeeService {
     Result save(EmployeeDTO employeeDTO);
 
     Result<PageResult<Employee>> getPage(EmployeePageQueryDTO employeePageQueryDTO);
+
+    Result setStatus(Integer status, String id);
 }

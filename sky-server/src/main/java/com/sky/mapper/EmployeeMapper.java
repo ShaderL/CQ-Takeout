@@ -34,4 +34,9 @@ public interface EmployeeMapper {
 
     @Select("select count(*) from employee")
     Integer CountAll();
+
+    @Update("update employee set status = #{status} where id = #{id}")
+    void setStatus(Integer status, String id);
+
+    void Update(Employee employee);
 }

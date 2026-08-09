@@ -1,6 +1,5 @@
 package com.sky.controller.admin;
 
-import com.github.pagehelper.Page;
 import com.sky.constant.JwtClaimsConstant;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
@@ -12,9 +11,9 @@ import com.sky.result.Result;
 import com.sky.service.EmployeeService;
 import com.sky.utils.JwtUtil;
 import com.sky.vo.EmployeeLoginVO;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -95,5 +94,19 @@ public class EmployeeController {
     @ApiOperation("分页查询员工")
     public Result<PageResult<Employee>> getPage(EmployeePageQueryDTO employeePageQueryDTO){
         return employeeService.getPage(employeePageQueryDTO);
+    }
+
+
+    /**
+     * 启用或禁用员工
+     * @param status
+     * @param id
+     * @return
+     */
+    @PostMapping("/status/{status}")
+    @ApiOperation("启用/禁用员工")
+    public Result enableOrDisable(@PathVariable Integer status, @RequestParam String id){
+        employeeService.setStatus(status, id);
+        return  Result.success();
     }
 }

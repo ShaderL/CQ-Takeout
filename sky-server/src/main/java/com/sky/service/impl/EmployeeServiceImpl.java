@@ -110,12 +110,21 @@ public class EmployeeServiceImpl implements EmployeeService {
         // 插件帮忙实现分页查找
         PageHelper.startPage(employeePageQueryDTO.getPage(),employeePageQueryDTO.getPageSize());
 
-        PageResult<Employee> pageResult = new PageResult<Employee>();
+        PageResult<Employee> pageResult = new PageResult<>();
         Page<Employee> page = employeeMapper.selectPage(employeePageQueryDTO);
         pageResult.setRecords(page.getResult());
         pageResult.setTotal(page.getTotal()); // 虽然 page 是查一页，但是 pagehelper 会获取所有数据
 
         return Result.success(pageResult);
+    }
+
+    public Result setStatus(Integer status, String id){
+        // employeeMapper.setStatus(status,id);
+        Employee employee = new Employee();
+        employee.setStatus(status);
+        employee.setId(Long.getLong(id));
+        employeeMapper.Update(employee);
+        return Result.success();
     }
 
 }
