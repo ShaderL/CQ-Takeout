@@ -107,6 +107,25 @@ public class EmployeeController {
     @ApiOperation("启用/禁用员工")
     public Result enableOrDisable(@PathVariable Integer status, @RequestParam String id){
         employeeService.setStatus(status, id);
-        return  Result.success();
+        return Result.success();
     }
+
+    // 区分“路径变量”和“请求参数”
+    // 请求参数不需要写("/{id}")，而且请求参数要写 @RequestParam
+    // 路径变量要写这个，参数写 @PathVariable
+    @GetMapping("/{id}")
+    @ApiOperation("根据 id 查询员工")
+    public Result getById(@PathVariable String id){
+        // System.out.println("传入参数为："+id);
+        // System.out.println("格式变换后为："+Long.parseLong(id));
+        return employeeService.getById(Long.parseLong(id));
+    }
+
+    @PutMapping
+    @ApiOperation("编辑员工信息")
+    public Result updateEmployee(@RequestBody EmployeeDTO employeeDTO){
+        return employeeService.updateEmployee(employeeDTO);
+    }
+
+
 }

@@ -118,11 +118,36 @@ public class EmployeeServiceImpl implements EmployeeService {
         return Result.success(pageResult);
     }
 
-    public Result setStatus(Integer status, String id){
+    /**
+     * 设置员工状态
+     * @param status
+     * @param id
+     * @return
+     */
+    public Result<Void> setStatus(Integer status, String id){
         // employeeMapper.setStatus(status,id);
         Employee employee = new Employee();
         employee.setStatus(status);
         employee.setId(Long.getLong(id));
+        employeeMapper.Update(employee);
+        return Result.success();
+    }
+
+    /**
+     * 根据 id 查询员工
+     * @param id
+     * @return
+     */
+    public Result<Employee> getById(Long id){
+        Employee employee = employeeMapper.getById(id);
+        return Result.success(employee);
+    }
+
+
+    public Result updateEmployee(EmployeeDTO employeeDTO){
+        Employee employee = new Employee();
+        // 使用这个工具类完成属性拷贝
+        BeanUtils.copyProperties(employeeDTO,employee);
         employeeMapper.Update(employee);
         return Result.success();
     }
