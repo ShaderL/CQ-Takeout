@@ -127,5 +127,25 @@ public class EmployeeController {
         return employeeService.updateEmployee(employeeDTO);
     }
 
+    /**
+     * 管理员修改成员密码
+     * @param employee
+     * @return
+     */
+    @PutMapping("/AdminEditPassword")
+    @ApiOperation("管理员修改员工密码")
+    public Result adminEditPassword(@RequestBody Employee employee){
+        return employeeService.adminEditPassword(employee);
+    }
 
+    /**
+     * 员工自己修改密码
+     * @param employee
+     * @return
+     */
+    @PutMapping("/EditPassword")
+    @ApiOperation("修改密码")
+    public Result editPassword(@RequestBody Employee employee){
+        return employeeService.editPassword(employee);
+    }
 }

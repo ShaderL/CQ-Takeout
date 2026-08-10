@@ -10,10 +10,9 @@ import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
 import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
-import com.sky.exception.AccountLockedException;
-import com.sky.exception.AccountNotFoundException;
-import com.sky.exception.PasswordErrorException;
+import com.sky.exception.*;
 import com.sky.mapper.EmployeeMapper;
+import com.sky.properties.AdminIdsProperties;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.EmployeeService;
@@ -32,6 +31,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Autowired
     private EmployeeMapper employeeMapper;
+
+    @Autowired
+    private AdminIdsProperties adminIdsProperties;
 
     /**
      * 员工登录
@@ -143,13 +145,64 @@ public class EmployeeServiceImpl implements EmployeeService {
         return Result.success(employee);
     }
 
-
+    /**
+     * 更新员工信息
+     * @param employeeDTO
+     * @return
+     */
     public Result updateEmployee(EmployeeDTO employeeDTO){
         Employee employee = new Employee();
         // 使用这个工具类完成属性拷贝
         BeanUtils.copyProperties(employeeDTO,employee);
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setUpdateUser(BaseContext.getCurrentId());
         employeeMapper.Update(employee);
         return Result.success();
     }
 
+    /**
+     * 管理员修改员工密码
+     * @param employee
+     * @return
+     */
+    public Result adminEditPassword(Employee employee){
+        Long currentId = BaseContext.getCurrentId();
+
+
+        if (!adminIdsProperties.isAdmin(currentId)){
+            throw new NotAdminException(MessageConstant.NOTADMIN_ERROR);
+        }
+
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setUpdateUser(BaseContext.getCurrentId());
+
+        // 密码加密存储
+        employee.setPassword(DigestUtils.md5DigestAsHex(employee.getPassword().getBytes()));
+
+        employeeMapper.Update(employee);
+        return Result.success();
+    }
+
+
+    /**
+     * 员工自己修改自己密码
+     * @param employee
+     * @return
+     */
+    public Result editPassword(Employee employee){
+        Long currentId = BaseContext.getCurrentId();
+
+        if (currentId != employee.getId()){
+            throw new NotSelfException(MessageConstant.NOTSELF_ERROR);
+        }
+
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setUpdateUser(BaseContext.getCurrentId());
+
+        // 密码加密存储
+        employee.setPassword(DigestUtils.md5DigestAsHex(employee.getPassword().getBytes()));
+
+        employeeMapper.Update(employee);
+        return Result.success();
+    }
 }

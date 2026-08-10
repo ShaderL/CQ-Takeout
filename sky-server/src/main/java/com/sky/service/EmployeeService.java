@@ -25,4 +25,8 @@ public interface EmployeeService {
     Result getById(Long id);
 
     Result updateEmployee(EmployeeDTO employeeDTO);
+
+    Result adminEditPassword(Employee employee);
+
+    Result editPassword(Employee employee);
 }
